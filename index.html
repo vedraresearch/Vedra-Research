@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vedra Research</title>
+<meta name="description" content="Vedra Research — an independent studio building self-contained simulation and analytics tools across physics, motorsport, and finance." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --black:#0A0A0B;
+    --black-2:#111113;
+    --panel:#141417;
+    --line:#26262B;
+    --line-soft:#19191D;
+    --bone:#E8E3D6;
+    --grey:#8C8C93;
+    --grey-dim:#5C5C63;
+    --gold:#C6A15B;
+    --gold-dim:#6e5c34;
+    --crimson:#B23A3A;
+    --display:'Spectral', Georgia, serif;
+    --body:'Hanken Grotesk', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--black);
+    color:var(--bone);
+    font-family:var(--body);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:.45;
+    pointer-events:none;
+    z-index:0;
+    -webkit-mask-image:radial-gradient(120% 120% at 70% 0%, #000 0%, transparent 75%);
+            mask-image:radial-gradient(120% 120% at 70% 0%, #000 0%, transparent 75%);
+  }
+
+  .wrap{width:min(1180px, 90vw);margin:0 auto;position:relative;z-index:1;}
+
+  .mono{font-family:var(--mono);}
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.7rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--grey);
+  }
+
+  /* ---------- top bar ---------- */
+  header{
+    position:sticky;top:0;z-index:20;
+    background:rgba(10,10,11,.74);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .bar{display:flex;align-items:center;justify-content:space-between;height:58px;}
+  .mark{
+    font-family:var(--mono);
+    font-size:.86rem;
+    letter-spacing:.14em;
+    display:flex;align-items:center;
+  }
+  nav.links{display:flex;gap:1.8rem;}
+  nav.links a{
+    font-family:var(--mono);font-size:.74rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--grey);transition:color .2s ease;
+  }
+  nav.links a:hover{color:var(--bone);}
+
+  /* ---------- hero ---------- */
+  .hero{padding:clamp(3.5rem,12vh,8rem) 0 clamp(3rem,8vh,6rem);}
+  .hero-inner{max-width:880px;}
+  h1{
+    font-family:var(--display);font-weight:300;
+    font-size:clamp(2.5rem,5.6vw,4.6rem);
+    line-height:1.06;letter-spacing:-.012em;margin:0;
+  }
+  h1 em{font-style:italic;color:var(--gold);font-weight:400;}
+  .lede{color:var(--grey);font-size:1.08rem;max-width:52ch;margin:1.8rem 0 0;}
+  .lede strong{color:var(--bone);font-weight:500;}
+
+  /* ---------- fields strip ---------- */
+  .fields{
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:1.5rem 0;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;
+  }
+  .field .eyebrow{display:block;margin-bottom:.35rem;}
+  .field p{margin:0;font-family:var(--display);font-size:1.18rem;color:var(--bone);}
+  .field span{color:var(--grey);font-family:var(--body);font-size:.92rem;display:block;margin-top:.2rem;}
+
+  /* ---------- projects ---------- */
+  .work{padding:clamp(4rem,9vh,7rem) 0 clamp(3rem,7vh,5rem);}
+  .work-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    gap:1rem;margin-bottom:2.6rem;flex-wrap:wrap;
+  }
+  .work-head h2{
+    font-family:var(--display);font-weight:300;
+    font-size:clamp(1.8rem,3.4vw,2.7rem);margin:.4rem 0 0;letter-spacing:-.01em;
+  }
+
+  .records{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);}
+  .record{
+    background:var(--black);padding:2rem 2rem 1.6rem;position:relative;
+    transition:background .35s ease;min-height:248px;display:flex;flex-direction:column;
+  }
+  .record:hover{background:var(--black-2);}
+  .record.wide{grid-column:1 / -1;}
+  .record .rtop{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;}
+  .designation{font-family:var(--mono);font-size:.74rem;letter-spacing:.18em;color:var(--gold);padding-top:.4rem;}
+  .plot-canvas{
+    width:128px;height:80px;flex:none;opacity:.95;
+    border:1px solid var(--line);border-radius:2px;
+    background:linear-gradient(180deg,var(--black-2),var(--black));
+  }
+  .record h3{
+    font-family:var(--display);font-weight:400;font-size:1.55rem;
+    margin:1.1rem 0 0;letter-spacing:-.01em;line-height:1.15;
+  }
+  .record p{color:var(--grey);font-size:.97rem;margin:.7rem 0 0;max-width:54ch;}
+  .tags{margin-top:auto;padding-top:1.4rem;display:flex;flex-wrap:wrap;gap:.45rem;}
+  .tag{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--grey);border:1px solid var(--line);padding:.28em .6em;border-radius:2px;
+  }
+  .status{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--crimson);border:1px solid var(--crimson);padding:.28em .65em;border-radius:2px;
+    display:inline-flex;align-items:center;gap:.5em;
+  }
+  .status .dot{width:6px;height:6px;border-radius:50%;background:var(--crimson);}
+  .record.wide .rtop{align-items:center;}
+  .record.wide h3{margin-top:.9rem;}
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line);padding:clamp(3rem,7vh,5rem) 0 3rem;}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;}
+  .foot-statement{
+    font-family:var(--display);font-weight:300;
+    font-size:clamp(1.4rem,3vw,2.1rem);line-height:1.2;max-width:20ch;margin:0;
+  }
+  .foot-links{display:flex;flex-direction:column;gap:.7rem;align-items:flex-end;}
+  .foot-links a{
+    font-family:var(--mono);font-size:.8rem;letter-spacing:.08em;color:var(--grey);
+    display:inline-flex;align-items:center;gap:.55em;transition:color .2s ease;
+  }
+  .foot-links a:hover{color:var(--gold);}
+  .foot-links a .arr{color:var(--grey-dim);transition:transform .2s ease;}
+  .foot-links a:hover .arr{transform:translate(2px,-2px);color:var(--gold);}
+  .colophon{
+    margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem;
+    font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--grey-dim);
+  }
+
+  .reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.in{opacity:1;transform:none;}
+
+  @media (max-width:880px){
+    .fields{grid-template-columns:1fr;gap:1.3rem;}
+    .records{grid-template-columns:1fr;}
+    .record.wide{grid-column:auto;}
+    nav.links{display:none;}
+  }
+  @media (max-width:520px){
+    body{font-size:16px;}
+    .record{padding:1.6rem 1.4rem;}
+    .plot-canvas{width:104px;height:66px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .reveal{transition:none;opacity:1;transform:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="mark">Vedra Research</div>
+    <nav class="links">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="about">
+    <div class="wrap">
+      <div class="hero-inner">
+        <h1>Simulation and analytics for <em>complex systems</em>.</h1>
+        <p class="lede">Vedra Research builds self-contained data tools across <strong>physics, motorsport, and finance</strong> — each one tested and built to run anywhere, with no servers and no accounts.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="fields reveal">
+      <div class="field">
+        <span class="eyebrow">Field 01</span>
+        <p>Physics &amp; simulation</p>
+        <span>Motion modeled from first principles.</span>
+      </div>
+      <div class="field">
+        <span class="eyebrow">Field 02</span>
+        <p>Sport &amp; telemetry</p>
+        <span>Pipelines that turn race data into signal.</span>
+      </div>
+      <div class="field">
+        <span class="eyebrow">Field 03</span>
+        <p>Finance &amp; markets</p>
+        <span>Local-first instruments for tracking capital.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="work" id="projects">
+    <div class="wrap">
+      <div class="work-head reveal">
+        <div>
+          <h2>Five projects.</h2>
+        </div>
+      </div>
+
+      <div class="records reveal">
+
+        <article class="record wide">
+          <div class="rtop">
+            <span class="designation">VR-01</span>
+            <canvas class="plot-canvas" data-scene="helix" width="256" height="160" aria-hidden="true"></canvas>
+          </div>
+          <h3>Cancer Research Tool</h3>
+          <p>A data-analytics tool aimed at real cancer research — built on public datasets, applying the same pipeline-and-dashboard approach as the rest of this work. Currently in early development.</p>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">Public datasets</span><span class="tag">Working title</span><span class="tag">2026</span>
+          </div>
+        </article>
+
+        <article class="record">
+          <div class="rtop">
+            <span class="designation">VR-02</span>
+            <canvas class="plot-canvas" data-scene="equity" width="256" height="160" aria-hidden="true"></canvas>
+          </div>
+          <h3>Vero — Wealth Management CLI</h3>
+          <p>A local-first portfolio tracker that lives in the terminal and renders a self-contained 3D dashboard. Tracks positions, P&amp;L, and risk — Sharpe with Lo (2002) confidence intervals, volatility, drawdown — benchmarked against SPY. No accounts, no cloud.</p>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">CLI</span><span class="tag">yfinance</span><span class="tag">Three.js</span><span class="tag">2026</span>
+          </div>
+        </article>
+
+        <article class="record">
+          <div class="rtop">
+            <span class="designation">VR-03</span>
+            <canvas class="plot-canvas" data-scene="orbit" width="256" height="160" aria-hidden="true"></canvas>
+          </div>
+          <h3>Orbital Mechanics Engine</h3>
+          <p>A deterministic astrodynamics engine computing orbital velocities, transfer Δv, and real Earth→Mars launch windows — validated against live JPL Horizons data — paired with an interactive 3D view of the solar system.</p>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">numpy / scipy</span><span class="tag">Three.js</span><span class="tag">2026</span>
+          </div>
+        </article>
+
+        <article class="record">
+          <div class="rtop">
+            <span class="designation">VR-04</span>
+            <canvas class="plot-canvas" data-scene="racing" width="256" height="160" aria-hidden="true"></canvas>
+          </div>
+          <h3>Red Bull Racing — Performance Analytics</h3>
+          <p>A resumable dual-source ETL pipeline pulling six seasons of F1 results and lap telemetry into a star-schema warehouse, with seven statistical models and a self-contained 3D dashboard — playable race sim included.</p>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">SQL</span><span class="tag">dbt</span><span class="tag">DuckDB</span><span class="tag">Game</span><span class="tag">2025</span>
+          </div>
+        </article>
+
+        <article class="record">
+          <div class="rtop">
+            <span class="designation">VR-05</span>
+            <canvas class="plot-canvas" data-scene="bars" width="256" height="160" aria-hidden="true"></canvas>
+          </div>
+          <h3>Red Bull Racing — OPEX Analytics</h3>
+          <p>Ingests F1 operating spend, flags overspends and duplicate payments, and renders one typed analysis two ways — a branded Excel workbook and an interactive cockpit dashboard.</p>
+          <div class="tags">
+            <span class="tag">Python</span><span class="tag">pandas</span><span class="tag">Plotly</span><span class="tag">Excel</span><span class="tag">2026</span>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="wrap">
+      <div class="foot-grid reveal">
+        <p class="foot-statement">Built in California by Felix Savedra.</p>
+        <div class="foot-links">
+          <a href="https://github.com/Felixsavedra-1" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
+          <a href="https://linkedin.com/in/felixsavedra" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+        </div>
+      </div>
+      <div class="colophon">
+        <span>© 2026 Vedra Research</span>
+        <span>Simulation · Analytics · Tooling</span>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var GOLD='178,58,58', CRIM='178,58,58', GREY='140,140,147', BONE='#E8E3D6', BONE_RGB='232,227,214';
+
+  function grid(ctx,W,H){
+    ctx.strokeStyle='rgba(38,38,43,0.85)'; ctx.lineWidth=1;
+    for(var x=0;x<=W;x+=W/8){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(var y=0;y<=H;y+=H/8){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  }
+  function dot(ctx,x,y,r,fill){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill();}
+  function ring(ctx,x,y,r,s){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.strokeStyle=s;ctx.lineWidth=1;ctx.stroke();}
+  function glow(ctx,x,y,r,rgb,a){
+    var g=ctx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,'rgba('+rgb+','+a+')'); g.addColorStop(1,'rgba('+rgb+',0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  }
+  function tail(ctx,pts,rgb,maxA,maxW){
+    ctx.lineCap='round';
+    for(var i=0;i<pts.length-1;i++){
+      var f=1-i/(pts.length-1);
+      ctx.strokeStyle='rgba('+rgb+','+(maxA*f).toFixed(3)+')';
+      ctx.lineWidth=Math.max(0.4,maxW*f);
+      ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[i+1].x,pts[i+1].y);ctx.stroke();
+    }
+    ctx.lineCap='butt';
+  }
+
+  function drawOrbit(ctx,W,H,t){
+    grid(ctx,W,H);
+    var cx=W*0.5, cy=H*0.5, UX=W*0.30, UY=H*0.30;   // screen length of Earth's orbit radius
+    var k=1.524;                                      // real Mars/Earth semi-major axis ratio
+    var e=(k-1)/(k+1), p=1*(1+e);                     // transfer ellipse, Sun at focus, perihelion=Earth
+    var phi=t*0.12+0.6;                               // slow revolution of the whole configuration
+    function sx(nx){return cx+nx*UX;} function sy(ny){return cy+ny*UY;}
+    // orbits
+    ctx.beginPath();ctx.ellipse(cx,cy,UX,UY,0,0,Math.PI*2);ctx.strokeStyle='rgba('+GREY+',0.30)';ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();ctx.ellipse(cx,cy,k*UX,k*UY,0,0,Math.PI*2);ctx.strokeStyle='rgba('+GREY+',0.20)';ctx.lineWidth=1;ctx.stroke();
+    // Sun at focus
+    glow(ctx,cx,cy,18,GOLD,0.5); dot(ctx,cx,cy,3,'rgba('+GOLD+',0.95)'); ring(ctx,cx,cy,6,'rgba('+GOLD+',0.28)');
+    // planned transfer trajectory (dashed arc, perihelion at Earth -> aphelion at Mars)
+    ctx.save();ctx.setLineDash([4,4]);ctx.beginPath();
+    for(var i=0;i<=90;i++){var nu=i/90*Math.PI,r=p/(1+e*Math.cos(nu)),L=phi+nu;
+      var X=sx(r*Math.cos(L)),Y=sy(r*Math.sin(L));if(i===0)ctx.moveTo(X,Y);else ctx.lineTo(X,Y);}
+    ctx.strokeStyle='rgba('+GOLD+',0.30)';ctx.lineWidth=1.1;ctx.stroke();ctx.restore();
+    // Earth at departure node
+    var eX=sx(Math.cos(phi)),eY=sy(Math.sin(phi));
+    glow(ctx,eX,eY,7,BONE_RGB,0.45); dot(ctx,eX,eY,2.6,BONE); ring(ctx,eX,eY,5,'rgba(232,227,214,0.30)');
+    // Mars at arrival node
+    var mX=sx(-k*Math.cos(phi)),mY=sy(-k*Math.sin(phi));
+    glow(ctx,mX,mY,9,GOLD,0.55); dot(ctx,mX,mY,2.8,'rgba('+GOLD+',0.95)'); ring(ctx,mX,mY,5.5,'rgba('+GOLD+',0.30)');
+    // spacecraft in transit
+    var tau=((t*0.22)%1+1)%1, nu=tau*Math.PI;
+    var env=Math.min(1,Math.min(tau,1-tau)/0.08); if(env<0)env=0;
+    var pts=[];
+    for(var s=0;s<22;s++){var nv=nu-s*0.06; if(nv<0)break;
+      var rr=p/(1+e*Math.cos(nv)),LL=phi+nv;pts.push({x:sx(rr*Math.cos(LL)),y:sy(rr*Math.sin(LL))});}
+    ctx.globalAlpha=env;
+    if(pts.length>1) tail(ctx,pts,GOLD,0.95,2.6);
+    var rH=p/(1+e*Math.cos(nu)),LH=phi+nu;
+    glow(ctx,sx(rH*Math.cos(LH)),sy(rH*Math.sin(LH)),7,GOLD,0.6); dot(ctx,sx(rH*Math.cos(LH)),sy(rH*Math.sin(LH)),2.2,BONE);
+    ctx.globalAlpha=1;
+  }
+
+  function fPort(x){return 0.5+0.18*Math.sin(x*0.15)+0.10*Math.sin(x*0.37+1.3)+0.06*Math.sin(x*0.8+2.1);}
+  function fBench(x){return 0.5+0.12*Math.sin(x*0.13+0.5)+0.05*Math.sin(x*0.3+0.7);}
+  function drawEquity(ctx,W,H,t){
+    grid(ctx,W,H);
+    var topY=H*0.16,botY=H*0.84;
+    function mapY(v){return botY-v*(botY-topY);}
+    var span=44, scroll=t*1.5, step=Math.max(3,W/64);
+    ctx.setLineDash([4,4]);ctx.beginPath();
+    for(var px=0;px<=W;px+=step){var u=px/W,s=u*span+scroll,y=mapY(fBench(s));if(px===0)ctx.moveTo(px,y);else ctx.lineTo(px,y);}
+    ctx.strokeStyle='rgba('+GREY+',0.40)';ctx.lineWidth=1.1;ctx.stroke();ctx.setLineDash([]);
+    var path=[];
+    for(var p2=0;p2<=W;p2+=step){var u2=p2/W,s2=u2*span+scroll;path.push({x:p2,y:mapY(fPort(s2))});}
+    var grad=ctx.createLinearGradient(0,topY,0,botY);
+    grad.addColorStop(0,'rgba('+GOLD+',0.32)');grad.addColorStop(1,'rgba('+GOLD+',0)');
+    ctx.beginPath();ctx.moveTo(path[0].x,botY);
+    for(var i=0;i<path.length;i++)ctx.lineTo(path[i].x,path[i].y);
+    ctx.lineTo(path[path.length-1].x,botY);ctx.closePath();ctx.fillStyle=grad;ctx.fill();
+    ctx.beginPath();for(var j=0;j<path.length;j++){if(j===0)ctx.moveTo(path[j].x,path[j].y);else ctx.lineTo(path[j].x,path[j].y);}
+    ctx.strokeStyle='rgba('+GOLD+',0.18)';ctx.lineWidth=4;ctx.lineJoin='round';ctx.stroke();
+    ctx.beginPath();for(var k=0;k<path.length;k++){if(k===0)ctx.moveTo(path[k].x,path[k].y);else ctx.lineTo(path[k].x,path[k].y);}
+    ctx.strokeStyle='rgba('+GOLD+',0.92)';ctx.lineWidth=1.8;ctx.stroke();
+    var mx=W*0.88, my=mapY(fPort((mx/W)*span+scroll));
+    glow(ctx,mx,my,10,GOLD,0.5);ring(ctx,mx,my,6,'rgba(232,227,214,0.35)'); dot(ctx,mx,my,2.8,BONE);
+  }
+
+  var RBR=[77.8,53.5,75.6,54.1,73.4,54.7,71.1,55.3,68.9,55.9,66.7,56.5,64.4,57.1,62.2,57.7,59.9,58.3,57.7,58.9,55.4,59.5,53.2,60.1,51.0,60.8,48.7,61.4,46.5,62.0,44.3,62.6,42.0,63.2,40.9,62.7,39.9,60.6,38.6,58.7,37.2,56.8,35.8,55.0,34.4,53.1,33.1,51.2,31.8,49.3,30.5,47.4,29.2,45.4,28.0,43.4,26.8,41.5,25.6,39.5,24.4,37.5,23.4,35.4,22.4,33.3,21.4,31.2,20.5,29.1,19.5,27.0,18.6,24.8,17.6,22.7,16.5,20.7,15.3,18.7,13.9,16.9,12.5,15.1,10.9,13.3,9.3,11.7,7.6,10.0,6.0,8.4,4.3,6.8,2.7,5.2,1.0,3.5,-0.0,1.8,1.7,0.7,4.0,0.4,6.3,0.2,8.6,0.0,10.9,-0.0,13.2,-0.0,15.5,0.1,17.9,0.3,20.2,0.5,22.5,0.9,24.7,1.3,27.0,1.7,29.3,2.2,31.6,2.6,33.8,3.1,36.1,3.5,38.4,4.0,40.7,4.4,43.0,4.8,45.3,5.0,47.6,5.2,49.9,5.3,52.2,5.4,54.5,5.5,56.9,5.5,59.2,5.6,61.5,5.7,63.0,6.3,63.8,8.4,62.9,10.5,61.5,12.4,59.9,14.1,58.1,15.5,56.1,16.6,53.9,17.4,51.6,17.9,49.3,18.1,47.0,17.9,44.7,17.5,42.4,17.1,40.1,16.8,37.8,16.4,35.5,16.0,33.2,15.7,31.2,16.4,29.3,17.7,28.0,19.6,27.5,21.8,27.7,24.2,28.5,25.9,29.7,27.9,30.8,29.9,32.0,31.9,33.1,33.9,34.3,35.9,35.8,37.4,37.9,38.4,40.2,38.5,42.3,37.7,44.1,36.3,45.5,34.4,47.1,32.7,48.9,31.3,51.0,30.2,53.1,29.4,55.2,29.0,57.5,28.9,59.8,28.8,62.1,28.8,64.5,28.8,66.8,28.7,69.1,28.7,71.4,28.6,73.7,28.6,76.0,28.5,78.4,28.5,80.7,28.4,83.0,28.4,85.3,28.3,87.6,28.2,90.0,28.2,92.0,28.2,94.1,29.1,95.7,30.7,96.7,32.8,97.4,35.0,98.1,37.2,98.7,39.4,99.4,41.6,100.0,43.9,99.3,45.6,97.4,46.9,95.4,48.0,93.3,49.0,91.3,49.8,89.0,50.4,86.8,51.0,84.6,51.7,82.3,52.3,80.1,52.9];
+  function drawRacing(ctx,W,H,t){
+    grid(ctx,W,H);
+    var C=drawRacing._c;
+    if(!C||C.W!==W||C.H!==H){
+      var pts=[];for(var i=0;i<RBR.length;i+=2)pts.push([RBR[i],RBR[i+1]]);
+      var xs=pts.map(function(p){return p[0];}),ys=pts.map(function(p){return p[1];});
+      var minx=Math.min.apply(0,xs),maxx=Math.max.apply(0,xs),miny=Math.min.apply(0,ys),maxy=Math.max.apply(0,ys);
+      var padX=W*0.12,padY=H*0.16,sc=Math.min((W-2*padX)/(maxx-minx),(H-2*padY)/(maxy-miny));
+      var offx=(W-(maxx-minx)*sc)/2-minx*sc,offy=(H-(maxy-miny)*sc)/2-miny*sc;
+      var P=pts.map(function(p){return {x:p[0]*sc+offx,y:p[1]*sc+offy};});
+      C={W:W,H:H,P:P,N:P.length,tw:Math.max(5,sc*2.6)};drawRacing._c=C;
+    }
+    var P=C.P,N=C.N,tw=C.tw;
+    function trace(){ctx.beginPath();for(var i=0;i<=N;i++){var p=P[i%N];if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);}}
+    ctx.lineJoin='round';ctx.lineCap='round';
+    trace();ctx.strokeStyle='rgba('+GREY+',0.13)';ctx.lineWidth=tw;ctx.stroke();
+    trace();ctx.strokeStyle='rgba('+GREY+',0.50)';ctx.lineWidth=1.2;ctx.stroke();
+    ctx.save();ctx.setLineDash([3,5]);trace();ctx.strokeStyle='rgba('+GOLD+',0.16)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
+    ctx.lineCap='butt';
+    var a0=P[0],a1=P[1],tx=a1.x-a0.x,ty=a1.y-a0.y,tl=Math.hypot(tx,ty)||1,nxp=-ty/tl,nyp=tx/tl,hw=tw*0.55;
+    ctx.beginPath();ctx.moveTo(a0.x-nxp*hw,a0.y-nyp*hw);ctx.lineTo(a0.x+nxp*hw,a0.y+nyp*hw);
+    ctx.strokeStyle='rgba('+BONE_RGB+',0.65)';ctx.lineWidth=1.6;ctx.stroke();
+    function carPts(s,len){var idx=s*N,a=[];for(var m=0;m<len;m++){a.push(P[Math.floor(idx-m+N*4)%N]);}return a;}
+    var cp2=carPts(((t*0.13-0.07)%1+1)%1,24);
+    tail(ctx,cp2,GREY,0.5,2.2);glow(ctx,cp2[0].x,cp2[0].y,7,BONE_RGB,0.30);dot(ctx,cp2[0].x,cp2[0].y,2.1,'rgba('+BONE_RGB+',0.85)');
+    var cp1=carPts(((t*0.13)%1+1)%1,32);
+    tail(ctx,cp1,GOLD,0.95,3);glow(ctx,cp1[0].x,cp1[0].y,9,GOLD,0.6);ring(ctx,cp1[0].x,cp1[0].y,6,'rgba(232,227,214,0.35)');dot(ctx,cp1[0].x,cp1[0].y,2.7,BONE);
+    ctx.lineJoin='miter';
+  }
+
+  var bbase=[0.45,0.64,0.52,0.78,0.60,0.82,0.68];
+  function drawBars(ctx,W,H,t){
+    grid(ctx,W,H);
+    var n=bbase.length,padX=W*0.1,plotW=W-2*padX,slot=plotW/n,gap=slot*0.34,bw=slot-gap;
+    var baseY=H*0.84,topY=H*0.16,span=baseY-topY,budget=0.74,byv=baseY-budget*span;
+    ctx.save();ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(padX,byv);ctx.lineTo(W-padX,byv);ctx.strokeStyle='rgba('+BONE_RGB+',0.42)';ctx.lineWidth=1;ctx.stroke();ctx.restore();
+    for(var i=0;i<n;i++){
+      var h=bbase[i]+0.17*Math.sin(t*1.7+i*0.8); if(h<0.06)h=0.06; if(h>0.97)h=0.97;
+      var x=padX+i*slot+gap*0.5,hpx=h*span,y=baseY-hpx, over=h>budget;
+      var g=ctx.createLinearGradient(0,y,0,baseY);
+      g.addColorStop(0,'rgba('+GOLD+','+(over?0.60:0.34)+')');
+      g.addColorStop(1,'rgba('+GOLD+',0.04)');
+      ctx.fillStyle=g;ctx.fillRect(x,y,bw,hpx);
+      if(over){ glow(ctx,x+bw/2,y,bw*0.95,GOLD,0.5); }
+      ctx.strokeStyle='rgba('+GOLD+','+(over?0.95:0.7)+')';ctx.lineWidth=1.6;
+      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+bw,y);ctx.stroke();
+      if(over){ dot(ctx,x+bw/2,y-4,1.8,'rgba('+GOLD+',0.95)'); }
+    }
+    ctx.beginPath();ctx.moveTo(padX,baseY);ctx.lineTo(W-padX,baseY);ctx.strokeStyle='rgba('+GREY+',0.45)';ctx.lineWidth=1;ctx.stroke();
+  }
+
+  function drawHelix(ctx,W,H,t){
+    grid(ctx,W,H);
+    var cx=W*0.5, top=H*0.12, bot=H*0.88, span=bot-top;
+    var amp=W*0.20, turns=2.2, N=140, spin=t*0.9;
+    ctx.strokeStyle='rgba('+GREY+',0.28)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+    function strandPts(phase){
+      var pts=[];
+      for(var i=0;i<=N;i++){
+        var s=i/N, y=top+s*span, th=s*turns*Math.PI*2+spin+phase;
+        pts.push({x:cx+amp*Math.sin(th), y:y, z:Math.cos(th)});
+      }
+      return pts;
+    }
+    var A=strandPts(0), B=strandPts(Math.PI), segs=[];
+    for(var i=0;i<N;i++){
+      segs.push({k:'s',c:GOLD,p:A[i],q:A[i+1],z:(A[i].z+A[i+1].z)/2});
+      segs.push({k:'s',c:GREY,p:B[i],q:B[i+1],z:(B[i].z+B[i+1].z)/2});
+    }
+    for(var r=0;r<=N;r+=7){ segs.push({k:'r',c:CRIM,p:A[r],q:B[r],z:(A[r].z+B[r].z)/2}); }
+    segs.sort(function(m,n){return m.z-n.z;});
+    for(var u=0;u<segs.length;u++){
+      var sg=segs[u], depth=(sg.z+1)/2;
+      if(sg.k==='r'){ ctx.strokeStyle='rgba('+sg.c+','+(0.14+0.30*depth).toFixed(3)+')'; ctx.lineWidth=1; }
+      else{ ctx.strokeStyle='rgba('+sg.c+','+(0.22+0.62*depth).toFixed(3)+')'; ctx.lineWidth=1+1.3*depth; }
+      ctx.beginPath();ctx.moveTo(sg.p.x,sg.p.y);ctx.lineTo(sg.q.x,sg.q.y);ctx.stroke();
+    }
+    for(var j=0;j<=N;j+=7){
+      if(A[j].z>0.1){ dot(ctx,A[j].x,A[j].y,1.6+1.4*A[j].z,'rgba('+GOLD+','+(0.45+0.45*A[j].z).toFixed(3)+')'); }
+      if(B[j].z>0.1){ dot(ctx,B[j].x,B[j].y,1.3+1.1*B[j].z,BONE); }
+    }
+  }
+
+  var SCENES={orbit:drawOrbit, equity:drawEquity, racing:drawRacing, bars:drawBars, helix:drawHelix};
+  var items=[];
+  [].forEach.call(document.querySelectorAll('canvas[data-scene]'), function(c){
+    var fn=SCENES[c.getAttribute('data-scene')]; if(!fn) return;
+    items.push({ctx:c.getContext('2d'), W:c.width, H:c.height, fn:fn});
+  });
+
+  if(reduce){ items.forEach(function(it){ it.ctx.clearRect(0,0,it.W,it.H); it.fn(it.ctx,it.W,it.H,-0.9); }); return; }
+
+  var t=0;
+  function loop(){
+    t+=0.011;
+    for(var i=0;i<items.length;i++){ var it=items[i]; it.ctx.clearRect(0,0,it.W,it.H); it.fn(it.ctx,it.W,it.H,t); }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+(function(){
+  var els = document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  },{threshold:0.12});
+  els.forEach(function(e){io.observe(e);});
+})();
+</script>
+</body>
+</html>
